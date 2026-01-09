@@ -1,0 +1,5 @@
+{
+  "name": "Besoo host",
+  "description": "A high-performance dashboard for deploying, managing, and monitoring Python bots in Docker containers with real-time logs and status tracking.",
+  "requestFramePermissions": []
+}
