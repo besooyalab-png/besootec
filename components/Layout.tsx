@@ -1,122 +1,118 @@
 
-import React, { useState } from 'react';
-import { User } from '../types';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { 
+  Home, BookOpen, Library, FileText, 
+  Info, MessageCircle, Menu, X, Scale, FileSignature, GraduationCap, Lightbulb
+} from 'lucide-react';
+import { storageService } from '../services/storageService';
 
-interface LayoutProps {
-  children: React.ReactNode;
-  user: User | null;
-  onLogout: () => void;
-  currentPage: string;
-  setCurrentPage: (page: string) => void;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, currentPage, setCurrentPage }) => {
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  if (!user) return <>{children}</>;
+  const [adminClicks, setAdminClicks] = useState(0);
+  const settings = storageService.getSettings();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
-    { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard' },
-    { id: 'deploy', icon: 'fa-cloud-arrow-up', label: 'Deploy Bot' },
-    { id: 'settings', icon: 'fa-gears', label: 'Settings' },
+    { name: 'الرئيسية', path: '/', icon: <Home size={24} /> },
+    { name: 'ملخصات قانونية', path: '/summaries', icon: <FileSignature size={24} /> },
+    { name: 'شرح القوانين', path: '/explanations', icon: <Lightbulb size={24} /> },
+    { name: 'مقالات قانونية', path: '/articles', icon: <BookOpen size={24} /> },
+    { name: 'محتوى تعليمي', path: '/education', icon: <GraduationCap size={24} /> },
+    { name: 'الكتب والمراجع', path: '/library', icon: <Library size={24} /> },
+    { name: 'أرشيف القضايا', path: '/cases', icon: <FileText size={24} /> },
+    { name: 'عن المؤسسة', path: '/about', icon: <Info size={24} /> },
+    { name: 'تواصل معنا', path: '/contact', icon: <MessageCircle size={24} /> },
   ];
 
-  const NavContent = () => (
-    <>
-      <div className="p-6">
-        <div className="flex items-center gap-3 text-indigo-400 font-bold text-xl">
-          <i className="fa-solid fa-robot"></i>
-          <span>Besoo host</span>
-        </div>
-      </div>
-
-      <nav className="flex-1 px-4 space-y-2 mt-4">
-        {navItems.map(item => (
-          <button
-            key={item.id}
-            onClick={() => {
-              setCurrentPage(item.id);
-              setIsSidebarOpen(false);
-            }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-              currentPage === item.id 
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
-                : 'text-slate-400 hover:bg-slate-700 hover:text-white'
-            }`}
-          >
-            <i className={`fa-solid ${item.icon} w-5`}></i>
-            <span className="font-medium">{item.label}</span>
-          </button>
-        ))}
-      </nav>
-
-      <div className="p-4 border-t border-slate-700">
-        <div className="flex items-center gap-3 p-2 bg-slate-900/50 rounded-xl mb-4">
-          <img src={user.photoURL} alt={user.displayName} className="w-10 h-10 rounded-full border border-indigo-500/50" />
-          <div className="overflow-hidden">
-            <p className="text-sm font-semibold truncate">{user.displayName}</p>
-            <p className="text-xs text-slate-500 truncate">{user.isPremium ? '💎 Premium' : '🌱 Free Plan'}</p>
-          </div>
-        </div>
-        <button 
-          onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-        >
-          <i className="fa-solid fa-right-from-bracket w-5"></i>
-          <span className="text-sm font-medium">Logout</span>
-        </button>
-      </div>
-    </>
-  );
+  const handleSecretClick = () => {
+    const newCount = adminClicks + 1;
+    if (newCount >= 10) {
+      setAdminClicks(0);
+      navigate('/admin');
+    } else {
+      setAdminClicks(newCount);
+      setTimeout(() => setAdminClicks(0), 5000);
+    }
+  };
 
   return (
-    <div className="flex min-h-screen bg-slate-900">
-      {/* Mobile Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col md:flex-row font-['Cairo'] overflow-x-hidden">
+      {/* Mobile Header */}
+      <div className="md:hidden bg-[#1e3a8a] text-white px-4 py-4 sticky top-0 z-50 shadow-2xl border-b-4 border-[#b4924c] h-24 flex items-center justify-between">
+        <button 
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+          className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all active:scale-90 border border-white/20"
+        >
+          {isSidebarOpen ? <X size={32} /> : <Menu size={32} />}
+        </button>
 
-      {/* Sidebar - Desktop & Tablet Drawer */}
+        <div 
+          onClick={handleSecretClick}
+          className="flex flex-col items-center gap-1 cursor-default select-none active:scale-95 transition-transform"
+        >
+           <span className="font-black text-lg drop-shadow-md">{settings.appName}</span>
+           <div className="w-10 h-1 bg-[#b4924c] rounded-full"></div>
+        </div>
+
+        <div className="bg-white p-2 rounded-full w-12 h-12 flex items-center justify-center border-2 border-[#b4924c] shadow-lg">
+           <Scale size={24} className="text-[#1e3a8a]" />
+        </div>
+      </div>
+
+      {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 border-r border-slate-700 flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static lg:block
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        fixed inset-y-0 right-0 z-[60] w-80 bg-[#1e3a8a] text-white transform transition-transform duration-500 ease-in-out
+        md:relative md:translate-x-0 overflow-y-auto shadow-2xl border-l-4 border-[#b4924c]
+        ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
       `}>
-        <NavContent />
+        <div 
+          onClick={handleSecretClick}
+          className="p-10 flex flex-col items-center gap-6 border-b border-white/10 text-center relative overflow-hidden cursor-default select-none"
+        >
+          <div className="bg-white p-3 rounded-full w-32 h-32 shadow-2xl flex items-center justify-center border-4 border-[#b4924c] transition-transform hover:scale-105 duration-500">
+             <Scale size={64} className="text-[#1e3a8a]" />
+          </div>
+          <div className="font-black text-white text-2xl tracking-tight leading-tight">{settings.appName}</div>
+        </div>
+
+        <nav className="mt-8 px-6 pb-20 space-y-3">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => setIsSidebarOpen(false)}
+              className={`
+                flex items-center gap-5 px-6 py-5 rounded-[20px] transition-all duration-300 group
+                ${location.pathname === item.path 
+                  ? 'bg-[#b4924c] text-white shadow-2xl translate-x-[-10px]' 
+                  : 'hover:bg-blue-800/60 text-blue-100'}
+              `}
+            >
+              <span className={`${location.pathname === item.path ? 'text-white' : 'text-[#b4924c] group-hover:scale-110 transition-transform'}`}>
+                {item.icon}
+              </span>
+              <span className="font-black text-lg">{item.name}</span>
+            </Link>
+          ))}
+        </nav>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden">
-        <header className="h-16 bg-slate-800/80 backdrop-blur-md border-b border-slate-700 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 text-slate-400 hover:text-white"
-            >
-              <i className="fa-solid fa-bars-staggered text-xl"></i>
-            </button>
-            <h2 className="text-lg font-semibold capitalize hidden sm:block">{currentPage}</h2>
-            {/* Logo for mobile only */}
-            <div className="flex items-center gap-2 text-indigo-400 font-bold sm:hidden">
-              <i className="fa-solid fa-robot"></i>
-              <span>Besoo host</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="text-slate-400 hover:text-white transition-colors relative p-2">
-               <i className="fa-solid fa-bell"></i>
-               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full border-2 border-slate-800"></span>
-            </button>
-            <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-slate-600 lg:hidden" />
-          </div>
-        </header>
-        
-        <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      {/* Main Content Area */}
+      <main className="flex-1 p-5 md:p-12 lg:p-16 overflow-y-auto w-full max-w-full mx-auto">
+        <div className="page-transition max-w-7xl mx-auto">
           {children}
         </div>
       </main>
+
+      {/* Backdrop */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/70 z-50 md:hidden backdrop-blur-md animate-in fade-in duration-300"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 };

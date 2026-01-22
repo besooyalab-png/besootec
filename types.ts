@@ -1,31 +1,27 @@
 
-export enum BotStatus {
-  RUNNING = 'RUNNING',
-  STOPPED = 'STOPPED',
-  ERROR = 'ERROR',
-  BUILDING = 'BUILDING'
+export enum ContentType {
+  ARTICLE = 'ARTICLE', // مقالات قانونية
+  BOOK = 'BOOK', // كتب ومراجع
+  CASE = 'CASE', // قضايا محلولة
+  SUMMARY = 'SUMMARY', // ملخصات قانونية
+  EXPLANATION = 'EXPLANATION', // شرح القوانين
+  EDUCATION = 'EDUCATION' // محتوى تعليمي
 }
 
-export interface Bot {
+export interface LegalContent {
   id: string;
-  name: string;
-  status: BotStatus;
-  createdAt: string;
-  expiresAt: string; // الوقت الذي سيتوقف فيه البوت تلقائياً
-  memoryUsage: string;
-  cpuUsage: string;
+  type: ContentType;
+  title: string;
+  category: string;
+  summary: string;
+  content: string;
+  author: string;
+  date: string;
+  imageUrl?: string;
+  fileUrl?: string; // For PDFs
 }
 
 export interface User {
-  id: string;
-  email: string;
-  displayName: string;
-  photoURL: string;
-  isPremium: boolean;
-}
-
-export interface LogEntry {
-  timestamp: string;
-  message: string;
-  level: 'INFO' | 'ERROR' | 'WARN';
+  role: 'admin' | 'user';
+  isLoggedIn: boolean;
 }

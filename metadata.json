@@ -1,5 +1,8 @@
 {
-  "name": "Besoo host",
-  "description": "A high-performance dashboard for deploying, managing, and monitoring Python bots in Docker containers with real-time logs and status tracking.",
-  "requestFramePermissions": []
+  "name": "مؤسسة الحق القانونية",
+  "description": "منصة قانونية متكاملة لإدارة المحتوى والاستشارات القانونية، تتيح للإدارة التحكم الكامل في المقالات، الكتب، القضايا، والبيانات التعريفية.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
 }
