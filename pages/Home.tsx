@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { storageService } from '../services/storageService';
-import ContentCard from '../components/ContentCard';
+import { storageService } from '../services/storageService.ts';
+import ContentCard from '../components/ContentCard.tsx';
 import { Scale, X, Calendar, User, ArrowLeftCircle } from 'lucide-react';
-import { LegalContent } from '../types';
+import { LegalContent } from '../types.ts';
 
 const HomeDetailModal: React.FC<{ item: LegalContent | null, onClose: () => void }> = ({ item, onClose }) => {
   if (!item) return null;
@@ -57,7 +57,6 @@ const Home: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700 pb-20 overflow-x-hidden">
-      {/* Hero Section */}
       <section className="relative bg-[#1e3a8a] rounded-[30px] md:rounded-[50px] p-8 md:p-20 text-white overflow-hidden shadow-2xl text-center border-b-[8px] border-[#b4924c]">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#b4924c]/10 rounded-full -ml-32 -mb-32 blur-3xl"></div>
@@ -78,7 +77,6 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Latest Content */}
       <section ref={latestContentRef} className="scroll-mt-10 px-2 md:px-0">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 border-b-2 border-gray-100 pb-8">
           <div className="border-r-[6px] border-[#b4924c] pr-6">

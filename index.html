@@ -61,7 +61,7 @@
       }
     </style>
     <script>
-      // تعريف متغير process لمنع تعطل التطبيق عند الرفع على GitHub Pages
+      // تعريف متغير process لمنع تعطل التطبيق في البيئات التي لا تحتوي عليه
       window.process = { env: { API_KEY: "" } };
     </script>
   <script type="importmap">
@@ -80,8 +80,6 @@
 </head>
   <body oncontextmenu="return false;">
     <div id="root"></div>
-    <!-- استدعاء ملف التطبيق الرئيسي لضمان التشغيل على GitHub Pages -->
-    <script type="module" src="./index.tsx"></script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>
